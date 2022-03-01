@@ -1,7 +1,10 @@
 (construct-doc)=
+
 # Construct
 
-Initializing a Document object is super easy. This chapter introduces the ways of constructing empty Document, filled Document. One can also construct Document from bytes, JSON, Protobuf message as introduced {ref}`in the next chapter<serialize>`.
+Initializing a Document object is super easy. This chapter introduces the ways of constructing empty and filled
+Documents. One can also construct Documents from bytes, JSON and Protobuf messages as introduced
+{ref}`in the next chapter<serialize>`.
 
 ## Construct an empty Document
 
@@ -15,7 +18,8 @@ d = Document()
 <Document ('id',) at 5dd542406d3f11eca3241e008a366d49>
 ```
 
-Every Document will have a unique random `id` that helps you identify this Document. It can be used to {ref}`access this Document inside a DocumentArray<access-elements>`.
+Every Document will have a unique random `id` that helps you identify this Document. It can be used to
+{ref}`access this Document inside a DocumentArray<access-elements>`.
 
 ````{tip}
 The random `id` is the hex value of [UUID1](https://docs.python.org/3/library/uuid.html#uuid.uuid1). To convert it into the string of UUID:
@@ -26,8 +30,7 @@ str(uuid.UUID(d.id))
 ```
 ````
 
-Though possible, it is not recommended modifying `.id` of a Document frequently, as this will lead to unexpected behavior.
-
+Though possible, modifying `.id` of a Document frequently is not recommended, as this will lead to unexpected behavior.
 
 ## Construct with attributes
 
@@ -47,7 +50,7 @@ d4 = Document(uri='https://jina.ai',
               tags={'foo': 'bar'})
 ```
 
-Don't forget to leverage autocomplete in your IDE.
+Don't forget to leverage autocompletion in your IDE.
 
 ```{figure} images/ide-autocomplete.png
 :width: 80%
@@ -72,8 +75,6 @@ When you `print()` a Document, you get a string representation such as `<Documen
                                       Document.id
 ```
 ````
-
-
 
 One can also wrap the keyword arguments into `dict`. The following ways of initialization have the same effect:
 
@@ -100,7 +101,8 @@ d3 = Document({'uri': 'https://jina.ai',
 To learn more about nested Document, please read {ref}`recursive-nested-document`.
 ```
 
-Document can be nested inside `.chunks` and `.matches`. The nested structure can be specified directly during construction:
+A Document can be nested inside `.chunks` and `.matches`. The nested structure can be specified directly during
+construction:
 
 ```python
 from docarray import Document
@@ -118,8 +120,11 @@ print(d)
 <Document ('id', 'chunks', 'matches') at d0>
 ```
 
-For a nested Document, print its root does not give you much information. You can use {meth}`~docarray.document.mixins.plot.PlotMixin.summary`. For example, `d.summary()` gives you a more intuitive overview of the structure.
-
+For a nested Document, printing its root does not give you much information. You can use
+{meth}`~docarray.document.mixins.plot.PlotMixin.summary` instead to get a more intuitive overview of the structure.
+```python
+d.summary()
+```
 ```text
  <Document ('id', 'chunks', 'matches') at d0>
     └─ matches
@@ -135,10 +140,10 @@ When using in Jupyter notebook/Google Colab, Document is automatically prettifie
 ```{figure} images/doc-in-jupyter.png
 ```
 
-
 ### Unknown attributes handling
 
-If you give an unknown attribute (i.e. not one of the built-in Document attributes), they will be automatically "caught" into `.tags` attributes. For example,
+If you pass an unknown attribute (i.e. not one of the built-in Document attributes), they will be automatically "caught"
+into `.tags` attributes. For example,
 
 ```python
 from docarray import Document
@@ -153,11 +158,13 @@ print(d, d.tags)
 {'hello': 'world'}
 ```
 
-You can change this "`catch`" behavior to `drop` (silently drop unknown attributes) or `raise` (raise a `AttributeError`) by specifying `unknown_fields_handler`. 
+You can change this "`catch`" behavior to `drop` (silently drop unknown attributes) or `raise` (raise
+a `AttributeError`) by specifying `unknown_fields_handler`.
 
 ### Resolve unknown attributes with rules
 
-One can resolve external fields into built-in attributes by specifying a mapping in `field_resolver`. For example, to resolve the field `hello` as the `id` attribute:
+One can resolve external fields into built-in attributes by specifying a mapping in `field_resolver`. For example, to
+resolve the field `hello` as the `id` attribute:
 
 ```python
 from docarray import Document
@@ -173,7 +180,6 @@ print(d)
 
 One can see `id` of the Document object is set to `world`.
 
-
 ## Copy from another Document
 
 To make a deep copy of a Document, use `copy=True`:
@@ -184,17 +190,17 @@ from docarray import Document
 d = Document(text='hello')
 d1 = Document(d, copy=True)
 
-print(d==d1, id(d)==id(d1))
+print(d == d1, id(d) == id(d1))
 ```
 
 ```text
 True False
 ```
 
-That indicates `d` and `d1` have identical content, but they are different objects in memory.
+This indicates `d` and `d1` have identical content, but are different objects in memory.
 
-
-If you want to keep the memory address of a Document object while only copying the content from another Document, you can use {meth}`~docarray.base.BaseDCType.copy_from`. 
+If you want to keep the memory address of a Document object while only copying the content from another Document, you
+can use {meth}`~docarray.base.BaseDCType.copy_from`.
 
 ```python
 from docarray import Document
@@ -216,4 +222,5 @@ world
 
 ## What's next?
 
-One can also construct Document from bytes, JSON, Protobuf message. These methods are introduced {ref}`in the next chapter<serialize>`.
+One can also construct Document from bytes, JSON, Protobuf message. These methods are introduced
+{ref}`in the next chapter<serialize>`.

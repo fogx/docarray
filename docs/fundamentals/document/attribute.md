@@ -1,6 +1,6 @@
 # Access Attributes
 
-Use `.` expression to get/set the value of an attribute as you would with any Python object: 
+Use the `.` expression to get/set the value of an attribute as you would with any Python object:
 
 ```python
 from docarray import Document
@@ -27,32 +27,30 @@ or use {meth}`~docarray.base.BaseDCType.pop`:
 d.pop('text')
 ```
 
-
-One can unset multiple attributes `.pop()`:
+One can unset multiple attributes with `.pop()`:
 
 ```python
 d.pop('text', 'id', 'mime_type')
 ```
 
-You can check which attributes are set by `.non_empty_fields`. 
-
+You can check which attributes are set with `.non_empty_fields`.
 
 ## Content attributes
 
-Among all attributes, content attributes, namely `.text`, `.tensor`, and `.blob` are super important as they contain the actual content.
+Among all attributes, content attributes, namely `.text`, `.tensor`, and `.blob` are the most important as they contain
+the actual content.
 
-They correspond to string-like data (e.g. for natural language), `ndarray`-like data (e.g. for image/audio/video data), and binary data for general purpose, respectively. 
-
+They correspond to string-like data (e.g. for natural language), `ndarray`-like data (e.g. for image/audio/video data),
+and binary data for general purpose task, respectively.
 
 | Attribute | Accept type                                                                                                                                                                            | Use case |
 | --- |----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --- |
 | `doc.text` | Python string                                                                                                                                                                          | Contain text |
 | `doc.tensor` | A Python (nested) list/tuple of numbers, Numpy `ndarray`, SciPy sparse matrix (`spmatrix`), TensorFlow dense & sparse tensor, PyTorch dense & sparse tensor, PaddlePaddle dense tensor | Contain image/video/audio |
-| `doc.blob` | 	Binary string                                                                                                                                                                         | Contain intermediate IO buffer |
+| `doc.blob` |    Binary string                                                                                                                                                                         | Contain intermediate IO buffer |
 
-
-Each Document can contain only one type of content. That means these three attributes are mutually exclusive. Let's see an example:
-
+Each Document can contain only one type of content. That means these three attributes are mutually exclusive. Let's see
+an example:
 
 ```python
 import numpy as np
@@ -68,9 +66,11 @@ print(d)
 <Document ('id', 'tensor', 'mime_type') at 7623808c6d6211ec9cf21e008a366d49>
 ```
 
-As one can see `text` field is reset to empty.
+As one can see, the `text` field is reset.
 
-But what if you want to represent more than one kind of information? Say, to fully represent a PDF page you need to store both image and text. In this case, you can use {ref}`nested Document<recursive-nested-document>`s by putting image into one sub-Document, and text into another sub-Document.
+But what if you want to represent more than one kind of information? Say, to fully represent a PDF page you need to
+store both image and text. In this case, you can use {ref}`nested Document<recursive-nested-document>`s by putting the
+image into one sub-Document, and text into another sub-Document.
 
 ```python
 from docarray import Document
@@ -78,13 +78,15 @@ from docarray import Document
 d = Document(chunks=[Document(tensor=...), Document(text=...)])
 ```
 
+The principle is each Document contains only one modality of information. In practice, this principle makes your full
+solution more clear and easier to maintain.
 
-The principle is each Document contains only one modality of information. In practice, this principle makes your full solution more clear and easier to maintain.
-
-There is also a `.content` sugar getter/setter of the content fields. The content will be automatically grabbed or assigned to either `text`, `blob`, or `tensor` field based on the given type.
+There is also a `.content` sugar getter/setter for the content fields. The content will be automatically grabbed or
+assigned to either `text`, `blob`, or `tensor` field based on the given type.
 
 ```python
 from docarray import Document
+
 d = Document(content='hello')
 print(d)
 ```
@@ -105,11 +107,13 @@ print(d)
 You can also check which content field is set by `.content_type`.
 
 (content-uri)=
+
 ## Load content from URI
 
 A quite common pattern is loading content from a URI instead of assigning them directly in the code.
 
-This can be easily done with `.uri` attribute. The value of `.uri` can point to either local URI, remote URI or [data URI](https://en.wikipedia.org/wiki/Data_URI_scheme).
+This can be easily done with `.uri` attribute. The value of `.uri` can point to either local URI, remote URI
+or [data URI](https://en.wikipedia.org/wiki/Data_URI_scheme).
 
 ````{tab} Local image URI
 
@@ -128,7 +132,6 @@ tensor [[[255 255 255]
   ...
 ```
 ````
-
 
 ````{tab} Remote text URI
 
@@ -172,7 +175,8 @@ tensor [[[255 255 255]
 
 ````
 
-There are more `.load_uri_to_*` functions that allow you to read {ref}`text<text-type>`, {ref}`image<image-type>`, {ref}`video<video-type>`, {ref}`3D mesh<mesh-type>`, {ref}`audio<audio-type>` and {ref}`tabular<table-type>` data. 
+There are more `.load_uri_to_*` functions that allow you to read {ref}`text<text-type>`, {ref}`image<image-type>`,
+{ref}`video<video-type>`, {ref}`3D mesh<mesh-type>`, {ref}`audio<audio-type>` and {ref}`tabular<table-type>` data.
 
 ```{figure} images/doc-load-autocomplete.png
 :width: 60%
@@ -184,3 +188,8 @@ Inline data URI is helpful when you need a quick visualization in HTML, as it em
 
 You can convert a URI to a data URI using `doc.load_uri_to_datauri()`. This will fetch the resource and make it inline.
 ```
+
+## What's next?
+
+Now we know how to create, serialize and access Documents. Lets continue by adding embeddings to our
+Document [in the next chapter](../document/embedding.md).  

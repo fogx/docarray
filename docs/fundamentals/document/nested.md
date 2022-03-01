@@ -1,7 +1,9 @@
 (recursive-nested-document)=
+
 # Nested Structure
 
-Document can be nested both horizontally and vertically via `.matches` and `.chunks`. The picture below illustrates the recursive Document structure. 
+A Document can be nested both horizontally and vertically via `.matches` and `.chunks`. The picture below illustrates
+the recursive Document structure.
 
 ```{figure} images/nested-structure.svg
 ```
@@ -37,7 +39,7 @@ You can add **chunks** (sub-Document) and **matches** (neighbour-Document) to a 
   d.matches.append(Document())
   ```
 
-Both `doc.chunks` and `doc.matches` return {ref}`DocumentArray<documentarray>`.
+Both `doc.chunks` and `doc.matches` return a {ref}`DocumentArray<documentarray>`.
 
 To get a clear picture of a nested Document, use {meth}`~docarray.document.mixins.plot.PlotMixin.summary`, e.g.:
 
@@ -57,8 +59,15 @@ d.summary()
 
 ## What's next?
 
-When you have multiple Documents with nested structures, traversing over certain chunks and matches can be crucial. Fortunately, this is extremely simple thanks to DocumentArray as shown in {ref}`access-elements`.
+### Multiple Documents
 
-Note that some methods rely on these two attributes, some methods require these two attributes to be filled in advance. For example, {meth}`~docarray.array.mixins.match.MatchMixin.match` will fill `.matches`, whereas {meth}`~docarray.array.mixins.evaluation.EvaluationMixin.evaluate` requires `.matches` to be filled.
+When you have multiple Documents with nested structures, traversing over certain chunks and matches can be crucial.
+Fortunately, this is extremely simple thanks to DocumentArray as shown in {ref}`access-elements`.
 
+Note that some methods rely on these two attributes, some methods require these two attributes to be filled in advance.
+For example, {meth}`~docarray.array.mixins.match.MatchMixin.match` will fill `.matches`, whereas
+{meth}`~docarray.array.mixins.evaluation.EvaluationMixin.evaluate` requires `.matches` to be filled.
 
+### Visualization
+
+Visualizing data inside Documents is easy. Find out how in the [the next chapter](../document/fluent-interface.md).

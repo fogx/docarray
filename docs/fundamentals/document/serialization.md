@@ -1,17 +1,21 @@
 (serialize)=
+
 # Serialization
 
-DocArray is designed to be "ready-to-wire": it assumes you always want to send/receive Document over network across microservices. Hence, serialization of Document is important. This chapter introduces multiple serialization methods of a single Document. 
+DocArray is designed to be "ready-to-wire": it assumes you always want to send/receive a Document over the network and
+across microservices. Hence, Document serialization is important. This chapter introduces multiple serialization
+methods for a single Document.
 
 ```{tip}
-One should use {ref}`DocumentArray for serializing multiple Documents<docarray-serialization>`, instead of looping over Documents one by one. The former is much faster and yield more compact serialization. 
+One should use {ref}`DocumentArray when serializing multiple Documents<docarray-serialization>`, instead of looping over Documents one by one. The former is much faster and yields more compact serialization. 
 ```
 
 ```{hint}
-Some readers may wonder: why aren't serialization a part of constructor? They do have similarity. Nonetheless, serialization often contains elements that do not really fit into constructor: input & output model, data schema, compression, extra-dependencies. DocArray made a decision to separate the constructor and serialization for the sake of clarity and maintainability. 
+Some readers may wonder: why aren't serializations a part of the constructor? They do have similarity. Nonetheless, serialization often contains elements that do not really fit into the constructor: input & output model, data schema, compression, extra-dependencies. DocArray made a decision to separate the constructor and serialization for the sake of clarity and maintainability. 
 ```
 
 (doc-json)=
+
 ## From/to JSON
 
 ```{tip}
@@ -19,12 +23,11 @@ If you are building a webservice and want to use JSON for passing DocArray objec
 ```
 
 ```{important}
-Depending on which protocol you use, this feature requires `pydantic` or `protobuf` dependency. You can do `pip install "docarray[full]"` to install it.
+Depending on which protocol you use, this feature requires `pydantic` or `protobuf` dependency. You can run `pip install "docarray[full]"` to install it.
 ```
 
-
-
-You can serialize a Document as a JSON string via {meth}`~docarray.document.mixins.porting.PortingMixin.to_json`, and then read from it via {meth}`~docarray.document.mixins.porting.PortingMixin.from_json`.
+You can serialize a Document as a JSON string via {meth}`~docarray.document.mixins.porting.PortingMixin.to_json`, and
+then read from it via {meth}`~docarray.document.mixins.porting.PortingMixin.from_json`.
 
 ```python
 from docarray import Document
@@ -43,7 +46,9 @@ print(d_as_json, d)
 <Document ('id', 'mime_type', 'text', 'embedding') at 641032d677b311ecb67a1e008a366d49>
 ```
 
-By default, it uses {ref}`JSON Schema and pydantic model<schema-gen>` for serialization, i.e. `protocol='jsonschema'`. You can switch the method to `protocol='protobuf'`, which leverages Protobuf as the JSON serialization backend.
+By default, these methods use {ref}`JSON Schema and pydantic model<schema-gen>` for serialization,
+i.e. `protocol='jsonschema'`. You can switch the method to `protocol='protobuf'`, which leverages Protobuf as the JSON
+serialization backend.
 
 ```python
 from docarray import Document
@@ -70,9 +75,11 @@ d.to_json(protocol='protobuf')
 }
 ```
 
-When using it for REST API, it is recommended to use `protocol='jsonschema'` as the resulted JSON will follow a pre-defined schema. This is highly appreciated for modern webservice engineering.
+When using it for REST API, it is recommended to use `protocol='jsonschema'` as the resulted JSON will follow a
+pre-defined schema. This is highly appreciated for modern webservice engineering.
 
-Note that you can pass extra arguments to control the include/exclude fields, lower/uppercase of the resulted JSON. For example, we can remove those fields that are empty or `none` from JSON via:
+Note that you can pass extra arguments to control the include/exclude fields, lower/uppercase of the resulted JSON. For
+example, we can remove those fields that are empty or `none` from JSON via:
 
 ```python
 from docarray import Document
@@ -82,10 +89,20 @@ d.to_json(exclude_none=True)
 ```
 
 ```json
-{"id": "cdbc4f7a77b411ec96ad1e008a366d49", "mime_type": "text/plain", "text": "hello, world", "embedding": [1, 2, 3]}
+{
+  "id": "cdbc4f7a77b411ec96ad1e008a366d49",
+  "mime_type": "text/plain",
+  "text": "hello, world",
+  "embedding": [
+    1,
+    2,
+    3
+  ]
+}
 ```
 
-It is easier to eyes. But when building REST API, you do not need to explicitly do this, pydantic model handle everything for you. More information can be found in {ref}`fastapi-support`.
+That's much easier on the eyes. Note that when building REST APIs, you do not need to do this explicitly, as the
+pydantic model handles everything for you. More information can be found in {ref}`fastapi-support`.
 
 ```{seealso}
 To find out what extra parameters you can pass to `to_json()`/`to_dict()`, please check out:
@@ -94,14 +111,16 @@ To find out what extra parameters you can pass to `to_json()`/`to_dict()`, pleas
 ```
 
 (doc-in-bytes)=
+
 ## From/to bytes
 
 ```{important}
 Depending on your values of `protocol` and `compress` arguments, this feature may require `protobuf` and `lz4` dependencies. You can do `pip install "docarray[full]"` to install it.
 ```
 
-
-Bytes or binary or buffer, how ever you want to call it, it probably the most common & compact wire format. DocArray provides {meth}`~docarray.document.mixins.porting.PortingMixin.to_bytes` and {meth}`~docarray.document.mixins.porting.PortingMixin.from_bytes` to serialize Document object into bytes.
+Bytes, binaries or buffers, however you want to call it, is probably the most common & compact wire format. DocArray
+provides {meth}`~docarray.document.mixins.porting.PortingMixin.to_bytes` and
+{meth}`~docarray.document.mixins.porting.PortingMixin.from_bytes` to serialize Document objects into bytes.
 
 ```python
 from docarray import Document
@@ -121,22 +140,25 @@ b'\x80\x03cdocarray.document\nDocument\nq\x00)\x81q\x01}q\x02X\x05\x00\x00\x00_d
 <Document ('id', 'mime_type', 'text', 'embedding') at 3644c0fa6d5a11ecbb081e008a366d49>
 ```
 
-Default serialization protocol is `pickle`, you can change it to `protobuf` by specifying `.to_bytes(protocol='protobuf')`. You can also add compression to it and make the result bytes smaller. For example, 
+The default serialization protocol used is `pickle`. You can change it to `protobuf` by
+specifying `.to_bytes(protocol='protobuf')`. You can also add compression to it and make the resulting size smaller. For
+example,
 
 ```python
 d = Document(text='hello, world', embedding=np.array([1, 2, 3]))
 print(len(d.to_bytes(protocol='protobuf', compress='gzip')))
 ```
 
-gives:
+returns:
 
 ```text
 110
 ```
 
-whereas the default `.to_bytes()` gives `666` (spooky~).
+whereas the default `.to_bytes()` returns `666` (spooky~).
 
-Note that when deserializing from a non-default binary serialization, you need to specify the correct `protocol` and `compress` arguments used at the serialization time:
+Note that when deserializing from a non-default binary serialization, you need to specify the correct `protocol`
+and `compress` arguments used at the serialization time:
 
 ```python
 d = Document.from_bytes(d_bytes, protocol='protobuf', compress='gzip')
@@ -146,17 +168,19 @@ d = Document.from_bytes(d_bytes, protocol='protobuf', compress='gzip')
 If you go with default `protcol` and `compress` settings, you can simply use `bytes(d)`, which is more Pythonic.
 ```
 
-
 ## From/to base64
 
 ```{important}
 Depending on your values of `protocol` and `compress` arguments, this feature may require `protobuf` and `lz4` dependencies. You can do `pip install "docarray[full]"` to install it.
 ```
 
-In some cases such as in REST API, you are allowed only to send/receive string not bytes. You can serialize Document into base64 string via {meth}`~docarray.document.mixins.porting.PortingMixin.to_base64` and load it via {meth}`~docarray.document.mixins.porting.PortingMixin.from_base64`.
+In some cases such as in REST APIs, you are only allowed to send/receive strings, not bytes. You can serialize a Document
+into a base64 string via {meth}`~docarray.document.mixins.porting.PortingMixin.to_base64` and load it via
+{meth}`~docarray.document.mixins.porting.PortingMixin.from_base64`.
 
 ```python
 from docarray import Document
+
 d = Document(text='hello', embedding=[1, 2, 3])
 
 print(d.to_base64())
@@ -170,6 +194,7 @@ You can set `protocol` and `compress` to get a more compact string:
 
 ```python
 from docarray import Document
+
 d = Document(text='hello', embedding=[1, 2, 3])
 
 print(len(d.to_base64()))
@@ -181,16 +206,18 @@ print(len(d.to_base64(protocol='protobuf', compress='lz4')))
 156
 ```
 
-Note that the same `protocol` and `compress` must be followed when using `.from_base64`.
+Note that the same `protocol` and `compress` must be used when using `.from_base64`.
 
 (doc-dict)=
+
 ## From/to dict
 
 ```{important}
 This feature requires `protobuf` or `pydantic` dependency. You can do `pip install "docarray[full]"` to install it.
 ```
 
-You can serialize a Document as a Python `dict` via {meth}`~docarray.document.mixins.porting.PortingMixin.to_dict`, and then read from it via {meth}`~docarray.document.mixins.porting.PortingMixin.from_dict`.
+You can serialize a Document as a Python `dict` via {meth}`~docarray.document.mixins.porting.PortingMixin.to_dict`, and
+then read from it via {meth}`~docarray.document.mixins.porting.PortingMixin.from_dict`.
 
 ```python
 from docarray import Document
@@ -209,16 +236,18 @@ print(d_as_dict, d)
 <Document ('id', 'mime_type', 'text', 'embedding') at 5596c84c77b711ecafed1e008a366d49>
 ```
 
-As the intermediate step of `to_json()`/`from_json()` it is unlikely to use dict IO directly. Nonetheless, you can pass the same `protocol` and `kwargs` as described in {ref}`doc-json` to control the serialization behavior.
+As the intermediate step of `to_json()`/`from_json()` it is unlikely to use dict IO directly. Nonetheless, you can pass
+the same `protocol` and `kwargs` as described in {ref}`doc-json` to control the serialization behavior.
 
 ## From/to Protobuf
 
 ```{important}
-This feature requires `protobuf` dependency. You can do `pip install "docarray[full]"` to install it.
+This feature requires `protobuf` dependency. You can run `pip install "docarray[full]"` to install it.
 ```
 
-You can also serialize a Document object into a Protobuf Message object. This is less frequently used as it is often an intermediate step when serializing into bytes, as in `to_dict()`. However, if you work with Python Protobuf API, having a Python Protobuf Message object at hand can be useful.
-
+You can also serialize a Document object into a Protobuf Message object. This is less frequently used as it is often an
+intermediate step when serializing into bytes, as in `to_dict()`. However, if you work with Python Protobuf API, having
+a Python Protobuf Message object at hand can be useful.
 
 ```python
 from docarray import Document
@@ -238,9 +267,15 @@ mime_type: "image/jpeg"
 <Document ('id', 'mime_type', 'uri') at e4b215106d6a11ecb28b1e008a366d49>
 ```
 
-One can refer to the [Protobuf specification of `Document`](../../proto/index.md) for details.  
-
+Refer to the [Protobuf specification of `Document`](../../proto/index.md) for more details.
 
 ## What's next?
 
-Serializing single Document can be useful but often we want to do things in bulk, say hundreds or one million Documents at once. In that case, looping over each Document and serializing one by one is inefficient. In DocumentArray, we will introduce the similar interfaces {meth}`~docarray.array.mixins.io.binary.BinaryIOMixin.to_bytes`, {meth}`~docarray.array.mixins.io.json.JsonIOMixin.to_json`, and {meth}`~docarray.array.mixins.io.json.JsonIOMixin.to_list` that allows one to [serialize multiple Documents much faster and more compact](../documentarray/serialization.md).
+Serializing a single Document can be useful, but often we want to do things in bulk, say hundreds or one million Documents
+at once. In that case, looping over each Document and serializing one by one is inefficient. In DocumentArray, we will
+introduce the similar interfaces {meth}`~docarray.array.mixins.io.binary.BinaryIOMixin.to_bytes`,
+{meth}`~docarray.array.mixins.io.json.JsonIOMixin.to_json`, and
+{meth}`~docarray.array.mixins.io.json.JsonIOMixin.to_list` that allows one
+to [serialize multiple Documents much faster and more compact](../documentarray/serialization.md).
+
+Afterwards we will look at how to access values of a Document in [the next chapter](../document/attribute.md).
